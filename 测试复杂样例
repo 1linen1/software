@@ -1,0 +1,53 @@
+#include<iostream>
+using namespace std;
+/*sdhasdha
+	khdka*/
+int main() 
+{
+	int max,min,temp;
+	char[] a={"121311"};
+	cin>>max>>min;//输入两个数 
+	while(max%min!=0){
+		temp=min;
+		min=max%min;
+		max=temp;//若两者求余不为0，min赋值给max，min为余数 
+	}
+	cout<<min;//输出min，即为最大公约数 
+	switch(max){
+		default:printf("1");
+	}
+	switch(min){
+	default:printf("1");	
+	}
+    if (){
+        if (){
+
+        }
+        else if(){
+
+        }
+    }
+    else{
+        if(){}
+        else if(){}
+        else{}
+        if(){}
+        else{}
+    }
+    if (){
+
+    }
+    else{
+
+    }
+
+    if(){
+
+    }
+    else if(){
+        if(){}
+    }
+    else{
+
+    }
+}//最大公倍数 =max*min/最大公约数 
