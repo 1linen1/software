@@ -1,0 +1,262 @@
+package com.corejava.software;
+
+
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.regex.*;
+import java.io.*;
+import java.util.Scanner;
+public class KeywordMatch {
+    public static void main(String[] args) {
+        String[] keywords = new String[]{"auto","break","case","char",
+                "const","continue","default","do","double","else","enum",
+                "extern","float","for","goto","if","int","long","register",
+                "return","short","signed","sizeof","static","struct","switch",
+                "typedef","union",",unsigned","void","volatile","while"};
+        String[] words = new String[]{"switch","case"};
+        String[] ieWords = new String[]{"if","else","else if"};
+        int sum;
+        int[] caseArray = new int[100];
+        int[] switchArray = new int[100];
+        Scanner in = new Scanner(System.in);
+        String[] str = new String[100];
+        String strTotal;
+        int rowNum = 0;
+        LinkedList<Integer> iList = new LinkedList<>();
+        LinkedList<Integer> eList = new LinkedList<>();
+        LinkedList<Integer> ieList = new LinkedList<>();
+        // 输入文件路径
+        String filePath = in.next();
+        // 输入完成级别
+        int level = in.nextInt();
+        File file = new File(filePath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while((str[rowNum] = reader.readLine())!=null){
+                rowNum++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        strTotal=commentOut(str,rowNum);
+        sum = keyWordSearch(strTotal,32,keywords);
+        // 找出case和switch位置
+        caseSwitchSearch(strTotal,2,caseArray,switchArray,words);
+        // 输出关键字总数
+        System.out.println("total num: "+sum);
+        // 输出switch 和case 个数
+        caseSwitchOutPut(caseArray,switchArray);
+        // 找出if，elseif，else
+        ifElseSearch(strTotal,2,iList,eList,ieList,ieWords);
+        //ifElseOutPut(ieList,eList,ieList,strTotal);
+    }
+    // 注释删除
+    public static String commentOut(String[] str ,int rowNum)
+    {
+        String strTotal=null;
+        for (int i = 0;i < rowNum;i++) {
+            //匹配 "//",并把后面的字符串删除
+            str[i] = str[i].replaceAll("\\s*/{2}.*","");
+            //匹配 ‘ “” ’,把字符串内容删除
+            str[i] = str[i].replaceAll("\".*\"","");
+            strTotal += str[i];
+        }
+        //匹配"\**\",把中间内容全部删除
+        strTotal=strTotal.replaceAll("/\\*.*\\*/","");
+        return strTotal;
+    }
+    // 关键字查找
+    public static int keyWordSearch(String strTotal,int totalNum,String[] keywords)
+    {
+        String pattern;
+        int count=0;
+        for (int i = 0;i < totalNum;i++){
+            pattern = "\\s*" + keywords[i] + "\\s*";
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(strTotal);
+            while (matcher.find()) {
+                if(keywords[i].equals("double"))
+                    count--;
+                count++;
+            }
+        }
+        return count;
+    }
+    //
+    public static void caseSwitchSearch(String strTotal,int num,int[] caseArray,int[] switchArray,String[] words)
+    {
+        String pattern;
+        int caseNum = 1;
+        int switchNum = 1;
+        for (int i = 0;i < num;i++){
+            pattern = "\\s*" + words[i] + "\\s*";
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(strTotal);
+            while(matcher.find()) {
+                if (words[i].equals("case")) {
+                    caseArray[caseNum] = matcher.start();
+                    caseNum++;
+                }
+                if (words[i].equals("switch")) {
+                    switchArray[switchNum] = matcher.start();
+                    switchNum++;
+                }
+            }
+        }
+
+        if(switchNum != 1 && switchNum != 0) {
+            switchArray[switchNum] = caseArray[caseNum - 1];
+        }
+        switchArray[0] = switchNum-1;
+        caseArray[0] = caseNum-1;
+    }
+    public static void caseSwitchOutPut(int[] caseArray,int[] switchArray)
+    {
+        System.out.println("switch num: " + switchArray[0]);
+        System.out.print("case num: ");
+        if (switchArray[0] <=1 ) {
+            System.out.println(caseArray[0]);
+        }
+        else {
+            for (int i = 1,j = 1;i <= switchArray[0];i++) {
+                int count = 0;
+                while(j <= caseArray[0] && caseArray[j] <= switchArray[i+1]){
+                    count++;
+                    j++;
+                }
+                System.out.print(count+" ");
+            }
+        }
+    }
+    //if else 和 if else if else 查找
+    public static void ifElseSearch(String strTotal, int snum , LinkedList<Integer> iList,
+                                    LinkedList<Integer> eList , LinkedList<Integer> ieList,String[] ieWords){
+
+        Stack<Integer> stack = new Stack<>();
+        int len = strTotal.length();
+        int flag = 1;
+        int mark = 0;
+        int num = 0;
+        int sum = 0;
+        int ieeNum = 0,eNum = 0;
+        String[] pattern=new String[]{"\\s*(?<!else\\s{1})if\\s*","\\s*else(?!\\s{1}if)\\s*",
+                                        "\\s*else if\\s*"};
+        for (int i = 0;i <= snum;i++){
+            Pattern p = Pattern.compile(pattern[i]);
+            Matcher matcher = p.matcher(strTotal);
+            while(matcher.find()) {
+                if (ieWords[i].equals("if")) {
+                    iList.add(matcher.start());
+                }
+                if (ieWords[i].equals("else")) {
+                    eList.add(matcher.start());
+                }
+                if(ieWords[i].equals("else if")) {
+                    ieList.add(matcher.start());
+                }
+            }
+        }
+        for (int i = 0; i < len; i++) {
+            if(strTotal.charAt(i) == '{'){
+                if (!iList.isEmpty() && iList.getFirst() < i) {
+                    iList.removeFirst();
+                    stack.push(1);
+                    mark++;
+                }
+                if (!eList.isEmpty() && eList.getFirst() < i){
+                    eList.removeFirst();
+                    stack.push(100);
+                    mark++;
+                }
+                if (!ieList.isEmpty() && ieList.getFirst() < i) {
+                    ieList.removeFirst();
+                    stack.push(10);
+                    mark++;
+                }
+            }
+            else if (mark > 0  && strTotal.charAt(i) == '}'){
+                num++;
+                mark--;
+            }
+            if((num == stack.size()) && stack.size()>=2) {
+                int temp = stack.pop();
+                sum = temp;
+                num--;
+                while(!stack.isEmpty() && stack.peek() < temp){
+                    temp = stack.pop();
+                    sum += temp;
+                    num--;
+                }
+            }
+            if (sum != 0) {
+                if (sum >= 111) {
+                    ieeNum++;
+                }
+                else if (sum == 101) {
+                    eNum++;
+                }
+                sum = 0;
+            }
+        }
+
+        System.out.println("\nif_else num: "+eNum);
+        //System.out.println("if_elseif_else num: "+ieeNum);
+    }
+    //弃用
+    public static void ifElseOutPut(LinkedList<Integer> iList, LinkedList<Integer> eList,
+                                    LinkedList<Integer> ieList,String strTotal){
+        Stack<Integer> stack = new Stack<>();
+        int len = strTotal.length();
+        int flag = 1;
+        int num = 0;
+        int sum = 0;
+        int ieeNum = 0,eNum = 0;
+        for (int i = 0; i < len; i++) {
+            if(strTotal.charAt(i) == '{'){
+                if (!iList.isEmpty() && iList.getFirst() < i) {
+                    iList.removeFirst();
+                    stack.push(1);
+                }
+                if (!eList.isEmpty() && eList.getFirst() < i){
+                    eList.removeFirst();
+                    stack.push(100);
+                }
+                if (!ieList.isEmpty() && ieList.getFirst() < i) {
+                    ieList.removeFirst();
+                    stack.push(10);
+                }
+            }
+            else if (strTotal.charAt(i) == '}'){
+                num++;
+            }
+            if(flag == 0 && (num != 1) && (num == stack.size())) {
+                int temp = stack.pop();
+                sum = temp;
+                while(stack.peek() < temp){
+                    sum += temp;
+                    temp = stack.pop();
+                }
+            }
+            if((flag == 1) && (num != 0) && (num == stack.size())) {
+                int temp = stack.pop();
+                sum = temp;
+                while(stack.peek() < temp){
+                    sum += temp;
+                    temp = stack.pop();
+                }
+                flag = 0;
+            }
+            if (sum != 0) {
+                if (sum == 111) {
+                    ieeNum++;
+                }
+                else if (sum == 101) {
+                    eNum++;
+                }
+                sum = 0;
+            }
+        }
+        System.out.println("\nif_else num: "+eNum);
+        System.out.println("if_elseif_else num: "+ieeNum);
+    }
+}
