@@ -1,0 +1,18 @@
+public static void caseSwitchOutPut(int[] caseArray,int[] switchArray)
+    {
+        System.out.println("switch num: " + switchArray[0]);
+        System.out.print("case num: ");
+        if (switchArray[0] <=1 ) {
+            System.out.println(caseArray[0]);
+        }
+        else {
+            for (int i = 1,j = 1;i <= switchArray[0];i++) {
+                int count = 0;
+                while(j <= caseArray[0] && caseArray[j] <= switchArray[i+1]){
+                    count++;
+                    j++;
+                }
+                System.out.print(count+" ");
+            }
+        }
+    }
