@@ -1,0 +1,56 @@
+public static void ifElseOutPut(LinkedList<Integer> iList, LinkedList<Integer> eList,
+                                    LinkedList<Integer> ieList,String strTotal){
+        Stack<Integer> stack = new Stack<>();
+        int len = strTotal.length();
+        int flag = 1;
+        int num = 0;
+        int sum = 0;
+        int ieeNum = 0,eNum = 0;
+        for (int i = 0; i < len; i++) {
+            if(strTotal.charAt(i) == '{'){
+                if (!iList.isEmpty() && iList.getFirst() < i) {
+                    iList.removeFirst();
+                    stack.push(1);
+                }
+                if (!eList.isEmpty() && eList.getFirst() < i){
+                    eList.removeFirst();
+                    stack.push(100);
+                }
+                if (!ieList.isEmpty() && ieList.getFirst() < i) {
+                    ieList.removeFirst();
+                    stack.push(10);
+                }
+            }
+            else if (strTotal.charAt(i) == '}'){
+                num++;
+            }
+            if(flag == 0 && (num != 1) && (num == stack.size())) {
+                int temp = stack.pop();
+                sum = temp;
+                while(stack.peek() < temp){
+                    sum += temp;
+                    temp = stack.pop();
+                }
+            }
+            if((flag == 1) && (num != 0) && (num == stack.size())) {
+                int temp = stack.pop();
+                sum = temp;
+                while(stack.peek() < temp){
+                    sum += temp;
+                    temp = stack.pop();
+                }
+                flag = 0;
+            }
+            if (sum != 0) {
+                if (sum == 111) {
+                    ieeNum++;
+                }
+                else if (sum == 101) {
+                    eNum++;
+                }
+                sum = 0;
+            }
+        }
+        System.out.println("\nif_else num: "+eNum);
+        System.out.println("if_elseif_else num: "+ieeNum);
+    }
