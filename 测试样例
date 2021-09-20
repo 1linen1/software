@@ -1,0 +1,154 @@
+#include<stdio.h>
+int main()
+{
+    int i;
+    //1
+    if(){
+        ;
+    }
+    else{
+        ;
+    }
+
+    //2
+    if(){
+        ;
+    }
+    else if(){
+        ;
+    }
+    else{
+        ;
+    }
+
+    //3
+    if () {
+        if() {
+            ;
+        }
+        else(){
+            ;
+        }
+    }
+    else {
+        ;
+    }
+
+    //4
+    if () {
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+        else {
+            ;
+        }
+    }
+    else {
+        ;
+    }
+
+    //5
+    if () {
+        if () {
+            ;
+        }
+        else if(){
+            ;
+        }
+    }
+    else {
+        ;
+    }
+    //6
+    if () {
+        ;
+    }
+    else {
+        if () {
+            ;
+        }
+        else{
+            ;
+        }
+    }
+
+    //7
+    if () {
+        ;
+    }
+    else{
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+    }
+    //8
+    if () {
+        ;
+    }
+    else{
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+        else {
+            ;
+        }
+    }
+
+    //9
+    if () {
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+
+    }
+    else if () {
+        ;
+    }
+    else {
+        ;
+    }
+
+    //10
+    if () {
+        ;
+    }
+    else if () {
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+    }
+    else {
+        ;
+    }
+
+    //11
+    if () {
+        ;
+    }
+    else if () {
+        ;
+    }
+    else {
+        if () {
+            ;
+        }
+        else if () {
+            ;
+        }
+    }    
+}
