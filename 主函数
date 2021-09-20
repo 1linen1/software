@@ -1,0 +1,43 @@
+public static void main(String[] args) {
+        String[] keywords = new String[]{"auto","break","case","char",
+                "const","continue","default","do","double","else","enum",
+                "extern","float","for","goto","if","int","long","register",
+                "return","short","signed","sizeof","static","struct","switch",
+                "typedef","union",",unsigned","void","volatile","while"};
+        String[] words = new String[]{"switch","case"};
+        String[] ieWords = new String[]{"if","else","else if"};
+        int sum;
+        int[] caseArray = new int[100];
+        int[] switchArray = new int[100];
+        Scanner in = new Scanner(System.in);
+        String[] str = new String[100];
+        String strTotal;
+        int rowNum = 0;
+        LinkedList<Integer> iList = new LinkedList<>();
+        LinkedList<Integer> eList = new LinkedList<>();
+        LinkedList<Integer> ieList = new LinkedList<>();
+        // 输入文件路径
+        String filePath = in.next();
+        // 输入完成级别
+        int level = in.nextInt();
+        File file = new File(filePath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while((str[rowNum] = reader.readLine())!=null){
+                rowNum++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        strTotal=commentOut(str,rowNum);
+        sum = keyWordSearch(strTotal,32,keywords);
+        // 找出case和switch位置
+        caseSwitchSearch(strTotal,2,caseArray,switchArray,words);
+        // 输出关键字总数
+        System.out.println("total num: "+sum);
+        // 输出switch 和case 个数
+        caseSwitchOutPut(caseArray,switchArray);
+        // 找出if，elseif，else
+        ifElseSearch(strTotal,2,iList,eList,ieList,ieWords);
+        //ifElseOutPut(ieList,eList,ieList,strTotal);
+    }
