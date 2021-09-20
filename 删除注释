@@ -1,0 +1,54 @@
+package com.corejava.software;
+
+
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.regex.*;
+import java.io.*;
+import java.util.Scanner;
+public class KeywordMatch {
+    public static void main(String[] args) {
+        String[] keywords = new String[]{"auto","break","case","char",
+                "const","continue","default","do","double","else","enum",
+                "extern","float","for","goto","if","int","long","register",
+                "return","short","signed","sizeof","static","struct","switch",
+                "typedef","union",",unsigned","void","volatile","while"};
+        String[] words = new String[]{"switch","case"};
+        int sum;
+        int[] caseArray = new int[100];
+        int[] switchArray = new int[100];
+        Scanner in = new Scanner(System.in);
+        String[] str = new String[100];
+        String strTotal;
+        int rowNum = 0;
+        // 输入文件路径
+        String filePath = in.next();
+        // 输入完成级别
+        int level = in.nextInt();
+        File file = new File(filePath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while((str[rowNum] = reader.readLine())!=null){
+                rowNum++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        strTotal=commentOut(str,rowNum);
+    }
+    // 注释删除
+    public static String commentOut(String[] str ,int rowNum)
+    {
+        String strTotal=null;
+        for (int i = 0;i < rowNum;i++) {
+            //匹配 "//",并把后面的字符串删除
+            str[i] = str[i].replaceAll("\\s*/{2}.*","");
+            //匹配 ‘ “” ’,把字符串内容删除
+            str[i] = str[i].replaceAll("\".*\"","");
+            strTotal += str[i];
+        }
+        //匹配"\**\",把中间内容全部删除
+        strTotal=strTotal.replaceAll("/\\*.*\\*/","");
+        return strTotal;
+    }
+}
